@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "990616114863",
+    "project_id": "allshop-dfa73",
+    "storage_bucket": "allshop-dfa73.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:990616114863:android:8cabf9108b8dc070c2a65a",
+        "android_client_info": {
+          "package_name": "com.steinacoz.allshop"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "990616114863-c2tkl13spl1j2ghdd4q3aotj24c2ehse.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDd8h2_SG4KTJexZcBExHqn7fRuZ_EgjV0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "990616114863-c2tkl13spl1j2ghdd4q3aotj24c2ehse.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,59 @@
+name: ems
+description: A new Flutter project.
+
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+  get: ^4.3.8
+  provider: ^6.0.1
+  material_design_icons_flutter: 5.0.5955-rc.1
+  jiffy: ^4.1.0
+  dio: ^4.0.4
+  fluttertoast: ^8.0.8
+  shared_preferences: ^2.0.11
+  geolocator: ^8.0.1
+  flutter_local_notifications: ^9.2.0
+  firebase_messaging: ^11.2.6
+  firebase_core: ^1.12.0
+  image_cropper: ^1.4.1
+  image_picker: ^0.8.4+6
+  flutter:
+    sdk: flutter
+
+
+  cupertino_icons: ^1.0.2
+  device_info_plus: ^3.2.1
+  cached_network_image: ^3.2.0
+  intl: ^0.17.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^1.0.0
+
+
+flutter:
+  uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  assets:
+    - assets/images/
+
+  fonts:
+    - family: SofiaProRegular
+      fonts:
+        - asset: assets/fonts/sofia/Sofia Pro Regular Az.otf
+    - family: MonumentRegular
+      fonts:
+        - asset: assets/fonts/moment/MonumentExtended-Regular.otf
+    - family: SofiaProMedium
+      fonts:
+        - asset: assets/fonts/sofia/Sofia Pro Medium Az.otf
+    - family: SofiaProSemiBold
+      fonts:
+        - asset: assets/fonts/sofia/Sofia Pro Semi Bold Az.otf
