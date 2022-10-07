@@ -15,6 +15,8 @@ class Business {
   String? createdAt;
   String? updatedAt;
   String? id;
+  String? address;
+  String? contactPhone;
 
   Business(
       {this.sellOnline,
@@ -25,6 +27,8 @@ class Business {
       this.detail,
       this.userId,
       this.plazaId,
+      this.address,
+      this.contactPhone,
       this.categoryId,
       this.category,
       this.plaza,
@@ -38,6 +42,8 @@ class Business {
     sellOnline = json['sellOnline'];
     acceptCash = json['acceptCash'];
     acceptCard = json['acceptCard'];
+      address = json['address'];
+    contactPhone = json['contactPhone'];
     name = json['name'];
     detail = json['detail'];
     userId = json['userId'];

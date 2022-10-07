@@ -3,6 +3,6 @@ class Api {
   static final IMAGE_BASE_URL = "https://api.allshoppf.com/";
   
   //https://allshop-server.herokuapp.com/
-  //"http://192.168.43.189:8586/"
+  //"http://192.168.100.25:8586/"  0912 517 3832
   //"https://api.allshoppf.com/"
 }

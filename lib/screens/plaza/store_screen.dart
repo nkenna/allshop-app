@@ -1,8 +1,12 @@
 import 'package:ems/models/business.dart' as bs;
 import 'package:ems/models/product.dart';
+import 'package:ems/providers/authprovider.dart';
+import 'package:ems/providers/plazaprovider.dart';
+import 'package:ems/providers/productprovider.dart';
 import 'package:ems/providers/storeprovider.dart';
 import 'package:ems/screens/plaza/product_screen.dart';
 import 'package:ems/utils/api.dart';
+import 'package:ems/utils/project_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -54,7 +58,7 @@ class _StoreScreenState extends State<StoreScreen> {
                   textInputAction: TextInputAction.next,
                   keyboardType: TextInputType.emailAddress,
                   decoration: const InputDecoration(
-                    hintText: "Search for something in Araimo Store",
+                    hintText: "Search for something",
                     border: InputBorder.none,
                   ),
                 ),
@@ -88,12 +92,17 @@ class _StoreScreenState extends State<StoreScreen> {
               width: Get.width * 0.3,
               height: double.infinity,
               decoration: BoxDecoration(
-                color: Colors.red,
+                //color: Colors.red,
                 borderRadius: BorderRadius.all(Radius.circular(8)),
-                image: DecorationImage(
-                  image: AssetImage("assets/images/araimo.jpeg"),
-                  fit: BoxFit.fill
-                )
+                image: widget.storeData!.image != null
+                      ? DecorationImage(
+                        image: NetworkImage("${Api.IMAGE_BASE_URL}${widget.storeData!.image!.imageUrl}"),                 
+                        fit: BoxFit.cover
+                      )
+                      : const DecorationImage(
+                        image: AssetImage("assets/images/business.png"),
+                        fit: BoxFit.cover
+                      )
               ),
               
               
@@ -113,17 +122,19 @@ class _StoreScreenState extends State<StoreScreen> {
                         ? widget.storeData!.name
                         : ""
                       : "" 
-                    }", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.white),),
+                    }", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black),),
                    
 
                    SizedBox(
-                     width: 100,
+                     width: 120,
                      child: ElevatedButton(
                        style: ButtonStyle(
-                         backgroundColor: MaterialStateProperty.all(Colors.white)
+                         backgroundColor: MaterialStateProperty.all(Color(0xff30b85a))
                        ),
-                       onPressed: (){},
-                       child: Text("Call", style: TextStyle(color: Color(0xff333333)),),
+                       onPressed: (){
+                        ProjectToast.showNormalToast("feature is coming soon");
+                       },
+                       child: Text("View on Map", style: TextStyle(color: Colors.white),),
                      ),
                    ),
 
@@ -140,103 +151,90 @@ class _StoreScreenState extends State<StoreScreen> {
       ),
     );
   }
+
+  
   
  
-  Widget productsContainer(Product product){
+  Widget newProductContainer(Product product){
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      child: Container(
-        width: double.infinity,
-        height: Get.height * 0.12,
-        color: Colors.white,
-        child: Row(
-          children: [
-            InkWell(
-              onTap: (){
-                Get.to(() => ProductScreen(product: product,));
-              },
-              child: Container(
-                width: Get.width * 0.3,
+      child: InkWell(
+        onTap: (){
+          Get.to(() => ProductScreen(productId: product.id,));
+        },
+        child: Container(
+          width: Get.width,
+          height: 250,
+          decoration: BoxDecoration(
+            //color: Colors.green,
+          ),
+          child: Column(
+            children: [
+              Container(
+                width: double.infinity,
+                height: 180,
                 decoration: BoxDecoration(
-                  image:  product.images!.length > 0 && product.images![0] != null
-                  ? DecorationImage(
-                    image: NetworkImage("${Api.IMAGE_BASE_URL}${product.images![0].imageUrl}")                  
-                    //fit: BoxFit.cover
-                  )
-                  : const DecorationImage(
-                    image: AssetImage("assets/images/hifi.jpg"),
-                    //fit: BoxFit.cover
-                  )
+                  color: Colors.orange,
+                    image:  product.images!.length > 0 && product.images![0] != null
+                        ? DecorationImage(
+                        image: NetworkImage("${Api.IMAGE_BASE_URL}${product.images![0].imageUrl}"),
+                        fit: BoxFit.cover
+                    )
+                        : const DecorationImage(
+                      image: AssetImage("assets/images/product.png"),
+                        fit: BoxFit.cover
+                    ),
                 ),
-                
-                
               ),
-            ),
-            SizedBox(width: 10,),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
+              Container(
+                width: double.infinity,
+                height: 70,
+                decoration: BoxDecoration(),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    InkWell(
-                      onTap: (){
-                        Get.to(() => ProductScreen());
-                      },
-                      child: Text("${product.name}".capitalize!, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xff333333)),)),
-                   
-                    Row(
-                      children: [
-                        Icon(Icons.store, color: Color(0xff333333)),
-                        Text("${product.business!.name}".capitalize!, style: TextStyle(fontSize: 14, color: Color(0xff333333)),),
-                      ],
-                    ),
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("NGN ${product.maxPrice}", style: TextStyle(fontSize: 14, color: Color(0xff333333)),),
-                        //Text("Contact", style: TextStyle(fontSize: 14, color: Color(0xff333333)),),
-                        InkWell(
-                          onTap: (){},
-                          child: Icon(MdiIcons.heartOutline, color: Colors.red,),
-                        )
-                      ],
-                    ),
-
-                    
+                    Text('${product.category!.name}', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, fontFamily: 'SofiaProSemiBold', color: Color(0xff333656)),),
+                    Text('${product.name}', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 14, fontFamily: 'SofiaProSemiBold', color: Color(0xff333656)),),
+                    SizedBox(height: 10,),
+                    Text('${product.detail}', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, fontFamily: 'SofiaProSemiBold', color: Color(0xff333656)),),
+                    if(product.minPrice > 0)
+                      Text('from NGN ${product.minPrice }', style: TextStyle(fontSize: 14, color: Colors.black)),
+                    //Text('${product.minPrice}', maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: 12, fontFamily: 'SofiaProSemiBold', color: Color(0xff333656)),),
                   ],
                 ),
               ),
-            ),
-
-            SizedBox(width: 10,),
-          ],
+            ],
+          ),
         ),
-
       ),
     );
   }
   
-  
   Widget productsContainerHolder(){
     return Consumer<StoreProvider>(
       builder: (context, pProvider, _) {
-        return Column(
-          children: List.generate(pProvider.plazaProducts.length, (index) => productsContainer(pProvider.plazaProducts[index])),
+        return pProvider.plazaProducts.isEmpty
+        ? Container(
+              width: double.infinity,
+              height: 100,
+              alignment: Alignment.center,
+              child: Text("No Products/Items have been added under this store", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w100, color: Colors.black,),),
+          )
+        : Column(
+          children: List.generate(pProvider.plazaProducts.length, (index) => newProductContainer(pProvider.plazaProducts[index])),
         );
       }
     );
   }
-
+  
   Widget dataContainer(){
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          SizedBox(
+          /*SizedBox(
             width: 100,
             child: ElevatedButton(
               style: ButtonStyle(
@@ -246,7 +244,7 @@ class _StoreScreenState extends State<StoreScreen> {
               onPressed: (){},
               child: Text("Follow", style: TextStyle(color: Color(0xff333333)),),
             ),
-          ),
+          ),*/
 
           Row(
             children: [
@@ -264,7 +262,7 @@ class _StoreScreenState extends State<StoreScreen> {
               ),
               SizedBox(width: 20,),
 
-              RichText(
+              /*RichText(
                 text: TextSpan(
                   text: "Followers: ",
                   style: TextStyle(fontSize: 14, color: Colors.white, fontWeight: FontWeight.bold),
@@ -275,7 +273,7 @@ class _StoreScreenState extends State<StoreScreen> {
                     )
                   ]
                 ),
-              ),
+              ),*/
             ],
           ),
 
@@ -286,18 +284,38 @@ class _StoreScreenState extends State<StoreScreen> {
       ),
     );
   }
-
+ 
+ 
+ Widget middleText(){
+    return  Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: Text("Items found in ${widget.storeData!.name}",
+      maxLines: 1,
+        style: TextStyle(color: Color(0xff4f4f4f), fontSize: 16, fontFamily: 'SofiaProMedium'),
+      ),
+    );
+  }
+  
+  
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: const Color(0xff0a0b0d),
+        appBar: AppBar(
+          title: Text('${widget.storeData!.name}', style: TextStyle(color: Colors.black),),
+          backgroundColor: Colors.white,
+          leading: IconButton(
+            onPressed: () => Get.back(),
+            icon: Icon(Icons.arrow_back, color: Colors.black,),
+          ),
+        ),
+        backgroundColor: Color(0xfff8f6f2),
         body: Container(
           width: Get.width,
           height: Get.height,
           child: Column(
             children: [
-              topBox(),
+             
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
@@ -308,6 +326,8 @@ class _StoreScreenState extends State<StoreScreen> {
                       dataContainer(),
                       SizedBox(height: 10,),
                       SizedBox(height: 20,),
+
+                      middleText(),
 
                       productsContainerHolder(),
                     

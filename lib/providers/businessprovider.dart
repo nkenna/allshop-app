@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ems/services/businessservice.dart';
 import 'package:ems/utils/project_toast.dart';
 import 'package:flutter/cupertino.dart';
@@ -50,9 +52,61 @@ class BusinessProvider with ChangeNotifier {
     }
   }
 
-  Future<bool>  addBusinessRequest(name, detail, plazaId, userId, categoryId) async {
+  Future<bool>  addBusinessRequest(name, detail, plazaId, userId, categoryId, address, contactPhone) async {
   
-    final response = await _httpService.addBusinessRequest(name, detail, plazaId, userId, categoryId);
+    final response = await _httpService.addBusinessRequest(name, detail, plazaId, userId, categoryId, address, contactPhone);
+
+    if(response == null){
+      ProjectToast.showErrorToast("It seems you are having network issues. Please check the internet connectivity and try again."); 
+      return false;
+    }
+
+    int statusCode = response.statusCode;
+    var payload = response.data;
+    print(payload);
+
+    String status = payload['status'] ?? "";
+
+    if (status.toLowerCase() == "success" && statusCode == 200){
+      ProjectToast.showNormalToast("${payload['message']}");
+      return true;
+
+    }
+    else{
+      ProjectToast.showErrorToast("${payload['message']}");
+      return false;
+    }
+  }
+
+  Future<bool>  uploadBusinessImage(userId, businessId, File file) async {
+  
+    final response = await _httpService.uploadBusinessImageRequest(userId, businessId, file);
+
+    if(response == null){
+      ProjectToast.showErrorToast("It seems you are having network issues. Please check the internet connectivity and try again."); 
+      return false;
+    }
+
+    int statusCode = response.statusCode;
+    var payload = response.data;
+    print(payload);
+
+    String status = payload['status'] ?? "";
+
+    if (status.toLowerCase() == "success" && statusCode == 200){
+      ProjectToast.showNormalToast("${payload['message']}");
+      return true;
+
+    }
+    else{
+      ProjectToast.showErrorToast("${payload['message']}");
+      return false;
+    }
+  }
+
+  Future<bool>  editBusinessRequest(name, detail, plazaId, userId, categoryId, address, contactPhone, businessId) async {
+  
+    final response = await _httpService.editBusinessRequest(name, detail, plazaId, userId, categoryId, address, contactPhone, businessId);
 
     if(response == null){
       ProjectToast.showErrorToast("It seems you are having network issues. Please check the internet connectivity and try again."); 

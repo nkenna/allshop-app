@@ -1,5 +1,7 @@
 import 'package:ems/models/homeplazadata.dart';
+import 'package:ems/models/searchplaza.dart';
 import 'package:ems/providers/homeprovider.dart';
+import 'package:ems/screens/plaza/plaza_screen.dart';
 import 'package:ems/utils/api.dart';
 import 'package:ems/utils/project_toast.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +17,7 @@ class SearchPlazaScreen extends StatefulWidget {
 
 class _SearchPlazaScreenState extends State<SearchPlazaScreen> {
 
-  Widget plazaContainer(Plaza plaza){
+  Widget plazaContainer(SearchPlaza plaza){
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: Container(
@@ -25,9 +27,10 @@ class _SearchPlazaScreenState extends State<SearchPlazaScreen> {
         child: Row(
               children: [
                 InkWell(
-                  onTap: () async{
-                    
-                   
+                  onTap: () {
+                    //print(plaza.sId);
+                    //return;
+                     Get.to(() => PlazaScreen(plazaId: plaza.id, name: plaza.name));
                   },
                   child: Container(
                     width: Get.width * 0.3,
@@ -85,7 +88,11 @@ class _SearchPlazaScreenState extends State<SearchPlazaScreen> {
         return Container(
           width: double.infinity,
           height: double.infinity,
-          child: ListView.builder(
+          child: hProvider.searchPlazas.isEmpty
+          ? Center(
+            child: Text('No Plazas found'),
+          )
+          :ListView.builder(
             itemCount: hProvider.searchPlazas.length,
             shrinkWrap: true,
             itemBuilder: (context, i){

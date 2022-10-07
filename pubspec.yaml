@@ -2,7 +2,7 @@ name: ems
 description: A new Flutter project.
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 1.0.0+1
+version: 1.0.18+21
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -29,6 +29,20 @@ dependencies:
   device_info_plus: ^3.2.1
   cached_network_image: ^3.2.0
   intl: ^0.17.0
+  location: ^4.3.0
+  in_app_review: ^2.0.4
+  in_app_update: ^3.0.0
+  flutter_linkify: ^5.0.2
+  url_launcher: ^6.1.0
+  keyboard_attachable: ^2.1.0
+  latlong2: ^0.8.1
+  flutter_rating_bar: ^4.0.1
+  dropdown_search: ^5.0.2
+  flutter_phone_direct_caller: ^2.1.1
+  google_sign_in: ^5.4.1
+  font_awesome_flutter: ^10.1.0
+  firebase_dynamic_links: ^4.3.10
+  share_plus: ^4.5.2
 
 dev_dependencies:
   flutter_test:
@@ -43,6 +57,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
+    - assets/
 
   fonts:
     - family: SofiaProRegular
@@ -57,3 +72,6 @@ flutter:
     - family: SofiaProSemiBold
       fonts:
         - asset: assets/fonts/sofia/Sofia Pro Semi Bold Az.otf
+    - family: SofiaProBold
+      fonts:
+        - asset: assets/fonts/sofia/Sofia Pro Bold Az.otf

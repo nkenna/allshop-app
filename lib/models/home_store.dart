@@ -1,4 +1,6 @@
-import 'home_product.dart';
+//import 'home_product.dart';
+
+import 'package:ems/models/business.dart';
 
 class HomeStore {
   bool? sellOnline;
@@ -12,8 +14,8 @@ class HomeStore {
   String? userId;
   String? plazaId;
   String? categoryId;
-  Images? image;
-  String? category;
+  ImageData? imageData;
+  Category? category;
   String? plaza;
   String? user;
   String? locationId;
@@ -28,7 +30,7 @@ class HomeStore {
       this.acceptCard,
       this.ratingCount,
       this.sumRating,
-      this.image,
+      this.imageData,
       this.avgRating,
       this.name,
       this.detail,
@@ -56,15 +58,17 @@ class HomeStore {
     userId = json['userId'];
     plazaId = json['plazaId'];
     categoryId = json['categoryId'];
-    category = json['category'];
+    category = json['category'] != null
+        ? new Category.fromJson(json['category'])
+        : null;
     plaza = json['plaza'];
     user = json['user'];
     locationId = json['locationId'];
     location = json['location'];
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
-    image = json['imageData'] != null
-        ? new Images.fromJson(json['imageData'])
+    imageData = json['imageData'] != null
+        ? new ImageData.fromJson(json['imageData'])
         : null;
     id = json['id'];
   }
@@ -79,10 +83,15 @@ class HomeStore {
     data['avgRating'] = this.avgRating;
     data['name'] = this.name;
     data['detail'] = this.detail;
+     if (this.imageData != null) {
+      data['imageData'] = this.imageData!.toJson();
+    }
     data['userId'] = this.userId;
     data['plazaId'] = this.plazaId;
     data['categoryId'] = this.categoryId;
-    data['category'] = this.category;
+    if (this.category != null) {
+      data['category'] = this.category!.toJson();
+    }
     data['plaza'] = this.plaza;
     data['user'] = this.user;
     data['locationId'] = this.locationId;
@@ -95,3 +104,64 @@ class HomeStore {
 }
 
 
+class ImageData {
+  String? sId;
+  String? imageUrl;
+  String? imageName;
+  String? imageType;
+
+  ImageData({this.sId, this.imageUrl, this.imageName, this.imageType});
+
+  ImageData.fromJson(Map<String, dynamic> json) {
+    sId = json['_id'];
+    imageUrl = json['imageUrl'];
+    imageName = json['imageName'];
+    imageType = json['imageType'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['_id'] = this.sId;
+    data['imageUrl'] = this.imageUrl;
+    data['imageName'] = this.imageName;
+    data['imageType'] = this.imageType;
+    return data;
+  }
+}
+
+class Category {
+  String? sId;
+  String? name;
+  String? type;
+  String? createdAt;
+  String? updatedAt;
+  int? iV;
+
+  Category(
+      {this.sId,
+      this.name,
+      this.type,
+      this.createdAt,
+      this.updatedAt,
+      this.iV});
+
+  Category.fromJson(Map<String, dynamic> json) {
+    sId = json['_id'];
+    name = json['name'];
+    type = json['type'];
+    createdAt = json['createdAt'];
+    updatedAt = json['updatedAt'];
+    iV = json['__v'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['_id'] = this.sId;
+    data['name'] = this.name;
+    data['type'] = this.type;
+    data['createdAt'] = this.createdAt;
+    data['updatedAt'] = this.updatedAt;
+    data['__v'] = this.iV;
+    return data;
+  }
+}

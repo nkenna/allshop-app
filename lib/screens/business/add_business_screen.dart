@@ -3,6 +3,7 @@ import 'package:ems/providers/authprovider.dart';
 import 'package:ems/providers/businessprovider.dart';
 import 'package:ems/screens/business/my_business_screen.dart';
 import 'package:ems/utils/project_toast.dart';
+import 'package:ems/utils/projectcolors.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +19,8 @@ class AddBusinessScreen extends StatefulWidget {
 class _AddBusinessScreenState extends State<AddBusinessScreen> {
   TextEditingController nameController = TextEditingController();
   TextEditingController detailController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
+  TextEditingController contactPhoneController = TextEditingController();
   List<Category>? _categories = [];
   Category? _selectedCategory;
   bool loading = false;
@@ -42,31 +45,26 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
 
   Widget nameField(){
     return TextField(
-          style: TextStyle(color: Colors.black, fontSize: 12),
+          style: const TextStyle(color: Colors.black, fontSize: 12),
           keyboardType: TextInputType.text,
           textInputAction: TextInputAction.next,
           controller: nameController,
-          decoration: InputDecoration(
-            fillColor: Colors.white,
-            filled: true,
-            hintText: 'Enter Business Name',
-            hintStyle: TextStyle(color: Color(0xff464040), fontSize: 14, fontWeight: FontWeight.w400),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(16)),
-              borderSide: BorderSide(
-                width: 1, color: Color(0xff464040)),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(16)),
-                borderSide: BorderSide(
-                  width: 1, color: Color(0xff464040)),
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(16)),
-                borderSide: BorderSide(
-                  width: 1, color: Color(0xff464040)),
-                ),
+          decoration: const InputDecoration(
+          hintText: "Enter Business/Store name",
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xfff0efeb), width: 2 ),
+          //borderRadius: BorderRadius.all(Radius.circular(15)),
           ),
+          focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xffbcd3e3), width: 2 ),
+          //borderRadius: BorderRadius.all(Radius.circular(15)),
+          ),
+          enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xfff0efeb), width: 2 ),
+          //borderRadius: BorderRadius.all(Radius.circular(15)),
+          ),
+          //prefixIcon: Icon(MdiIcons.email, color: Color(0xff333333),)
+        ),
         );
       
   }
@@ -79,27 +77,22 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
           controller: detailController,
           minLines: 7,
           maxLines: 10,
-          decoration: InputDecoration(
-            hintText: 'Enter Business details',
-            fillColor: Colors.white,
-            filled: true,
-            hintStyle: TextStyle(color: Color(0xff464040), fontSize: 14, fontWeight: FontWeight.w400),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(16)),
-              borderSide: BorderSide(
-                width: 1, color: Color(0xff464040)),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(16)),
-                borderSide: BorderSide(
-                  width: 1, color: Color(0xff464040)),
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(16)),
-                borderSide: BorderSide(
-                  width: 1, color: Color(0xff464040)),
-                ),
+          decoration: const InputDecoration(
+          hintText: "Enter short Business/Store description",
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xfff0efeb), width: 2 ),
+          //borderRadius: BorderRadius.all(Radius.circular(15)),
           ),
+          focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xffbcd3e3), width: 2 ),
+          //borderRadius: BorderRadius.all(Radius.circular(15)),
+          ),
+          enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xfff0efeb), width: 2 ),
+          //borderRadius: BorderRadius.all(Radius.circular(15)),
+          ),
+          //prefixIcon: Icon(MdiIcons.email, color: Color(0xff333333),)
+        ),
         );
       
   }
@@ -111,8 +104,8 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
           child: Container(
             decoration: BoxDecoration(
                 color: Colors.white,
-                border: Border.all(color: Color(0xff464040), width: 2),
-                borderRadius: BorderRadius.all(Radius.circular(15), )
+                border: Border.all(color: Color(0xffbcd3e3), width: 2),
+                //borderRadius: BorderRadius.all(Radius.circular(15), )
             ),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -123,7 +116,7 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
                 ),
                 value: _selectedCategory,
                 icon: Icon(
-                  Icons.arrow_drop_down, color: Color(0xff464040), size: 32,),
+                  Icons.arrow_drop_down, color: Color(0xff464040), size: 28,),
                 elevation: 10,
                 style: TextStyle(fontSize: 12, color: Colors.white),
                 underline: Container(
@@ -154,47 +147,106 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
 
   
   Widget saveBtn(){
-    return ElevatedButton(
-      style: ButtonStyle(
-        backgroundColor: MaterialStateProperty.all(Colors.white)
+    return SizedBox(
+      width: Get.width,
+      height: 50,
+      child: ElevatedButton(
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(Color(0xff30b85a))
+        ),
+        onPressed: () async{
+          if(nameController.text.isEmpty){
+            ProjectToast.showErrorToast("Business Name is required");
+            return;
+          }
+
+          if(_selectedCategory == null){
+            ProjectToast.showErrorToast("Business category is required");
+            return;
+          }
+
+          setState(() {
+            loading = true;
+          });
+
+          final resp = await Provider.of<BusinessProvider>(context, listen: false).addBusinessRequest(
+            nameController.text,
+            detailController.text,
+            widget.plazaId,
+            Provider.of<AuthProvider>(context, listen: false).user!.id,
+            _selectedCategory!.id,
+            addressController.text,
+            contactPhoneController.text
+          );
+
+           setState(() {
+            loading = false;
+          });
+
+          if(resp){
+            
+            Get.offAll(() => MyBusinessScreen());
+
+          }
+        },
+        child: loading
+        ? CircularProgressIndicator.adaptive(backgroundColor: Colors.white,)
+        : Text('Save', style: TextStyle(color: Colors.white, fontFamily: 'SofiaProSemiBold'),),
       ),
-      onPressed: () async{
-        if(nameController.text.isEmpty){
-          ProjectToast.showErrorToast("Business Name is required");
-          return;
-        }
-
-        if(_selectedCategory == null){
-          ProjectToast.showErrorToast("Business category is required");
-          return;
-        }
-
-        setState(() {
-          loading = true;
-        });
-
-        final resp = await Provider.of<BusinessProvider>(context, listen: false).addBusinessRequest(
-          nameController.text,
-          detailController.text,
-          widget.plazaId,
-          Provider.of<AuthProvider>(context, listen: false).user!.id,
-          _selectedCategory!.id
-        );
-
-         setState(() {
-          loading = false;
-        });
-
-        if(resp){
-          
-          Get.offAll(() => MyBusinessScreen());
-
-        }
-      },
-      child: loading
-      ? CircularProgressIndicator.adaptive(backgroundColor: Colors.white,)
-      : Text('Save', style: TextStyle(color: Color(0xff333333)),),
     );
+  }
+
+  Widget addressField(){
+    return TextField(
+          style: const TextStyle(color: Colors.black, fontSize: 12),
+          keyboardType: TextInputType.text,
+          textInputAction: TextInputAction.next,
+          controller: addressController,
+          decoration: const InputDecoration(
+          hintText: "Business/Store suite/number",
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xfff0efeb), width: 2 ),
+          //borderRadius: BorderRadius.all(Radius.circular(15)),
+          ),
+          focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xffbcd3e3), width: 2 ),
+          //borderRadius: BorderRadius.all(Radius.circular(15)),
+          ),
+          enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xfff0efeb), width: 2 ),
+          //borderRadius: BorderRadius.all(Radius.circular(15)),
+          ),
+          //prefixIcon: Icon(MdiIcons.email, color: Color(0xff333333),)
+        ),
+        );
+      
+  }
+
+
+  Widget contactPhoneField(){
+    return TextField(
+          style: const TextStyle(color: Colors.black, fontSize: 12),
+          keyboardType: TextInputType.text,
+          textInputAction: TextInputAction.next,
+          controller: contactPhoneController,
+          decoration: const InputDecoration(
+          hintText: "Contact Phone Number",
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xfff0efeb), width: 2 ),
+          //borderRadius: BorderRadius.all(Radius.circular(15)),
+          ),
+          focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xffbcd3e3), width: 2 ),
+          //borderRadius: BorderRadius.all(Radius.circular(15)),
+          ),
+          enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xfff0efeb), width: 2 ),
+          //borderRadius: BorderRadius.all(Radius.circular(15)),
+          ),
+          //prefixIcon: Icon(MdiIcons.email, color: Color(0xff333333),)
+        ),
+        );
+      
   }
 
 
@@ -203,9 +255,14 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text("Add New Business/Store"),
+          iconTheme: IconThemeData(
+            color: mainColor
+          ),
+          backgroundColor: Colors.white,
+          title: Text('Add Business/Store', style: TextStyle(color: Colors.black),),
         ),
-        backgroundColor: const Color(0xff464040),
+        
+        backgroundColor: Colors.white,
         body: Container(
           width: Get.width,
           height: Get.height,
@@ -222,6 +279,16 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
                 Padding(
                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   child: detailField(),
+                ),
+
+                Padding(
+                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  child: addressField(),
+                ),
+
+                Padding(
+                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                  child: contactPhoneField(),
                 ),
 
                  Padding(

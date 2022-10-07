@@ -37,7 +37,7 @@ class _StarredScreenState extends State<StarredScreen> {
           children: [
             InkWell(
               onTap: (){
-                Get.to(() => ProductScreen());
+                Get.to(() => ProductScreen(productId: sProduct.product!.sId,));
               },
               child: Container(
                 width: Get.width * 0.3,
@@ -66,14 +66,14 @@ class _StarredScreenState extends State<StarredScreen> {
                   children: [
                     InkWell(
                       onTap: (){
-                        Get.to(() => ProductScreen());
+                        Get.to(() => ProductScreen(productId: sProduct.product!.sId,));
                       },
                       child: Text("${sProduct.product!.name}".capitalize!, style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xff333333)),)),
                    
                     Row(
                       children: [
                         Icon(Icons.store, color: Color(0xff333333)),
-                        Text("${sProduct.product!.business!.name}".capitalize!, style: TextStyle(fontSize: 14, color: Color(0xff333333)),),
+                        Expanded(child: Text("${sProduct.product!.business!.name}", maxLines: 2, style: TextStyle(fontSize: 14, color: Color(0xff333333)),)),
                       ],
                     ),
 
@@ -83,8 +83,19 @@ class _StarredScreenState extends State<StarredScreen> {
                         Text("NGN ${sProduct.product!.maxPrice}", style: TextStyle(fontSize: 14, color: Color(0xff333333)),),
                         //Text("Contact", style: TextStyle(fontSize: 14, color: Color(0xff333333)),),
                         InkWell(
-                          onTap: (){},
-                          child: Icon(MdiIcons.heartOutline, color: Colors.red,),
+                          onTap: () async{
+                            var resp = await Provider.of<ProductProvider>(context, listen: false).starUnstarProduct(
+                              Provider.of<AuthProvider>(context, listen: false).user!.id, 
+                              sProduct.product!.sId, 
+                              false
+                            );
+
+                            if(resp){
+                              _future = Provider.of<ProductProvider>(context, listen: false).getStarredProductsByUser(Provider.of<AuthProvider>(context, listen: false).user!.id);
+                              setState(() {});
+                            }
+                          },
+                          child: Icon(MdiIcons.closeBox, color: Colors.red,),
                         )
                       ],
                     ),
@@ -109,16 +120,17 @@ class _StarredScreenState extends State<StarredScreen> {
       child: Container(
         width: Get.width,
         height: Get.height,
-        color: const Color(0xff464040),
+        color: Colors.white,
         child: Column(
           children: [
             SizedBox(height: 30,),
-            Text("Your Starred Products", style: TextStyle(color: Colors.white, fontFamily: 'SofiaProMedium', fontSize: 16),),
+            Text("Your Starred Products", style: TextStyle(color: Colors.black, fontFamily: 'SofiaProMedium', fontSize: 16),),
             SizedBox(height: 20,),
             Expanded(
               child: FutureBuilder(
                     future: _future,
                     builder: (BuildContext context, AsyncSnapshot<List<StarredProduct>?> snapshot) {
+
                       if(snapshot.hasData){
                         print(snapshot.data!.length);
                         return ListView.builder(
@@ -127,7 +139,11 @@ class _StarredScreenState extends State<StarredScreen> {
                             return productsContainer(snapshot.data![i]);
                           },
                         );
-                      }else{
+                      }else if(snapshot.connectionState == ConnectionState.waiting){
+                        return Center(child: CircularProgressIndicator.adaptive(backgroundColor: Colors.white));
+                      }
+                      
+                      else{
                         print(snapshot.data);
                         return Container();
                       }

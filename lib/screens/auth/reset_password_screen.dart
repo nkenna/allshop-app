@@ -2,6 +2,7 @@ import 'package:ems/providers/authprovider.dart';
 import 'package:ems/screens/auth/login_screen.dart';
 import 'package:ems/utils/project_toast.dart';
 import 'package:ems/widgets/onboardingbutton.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -30,7 +31,18 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       keyboardType: TextInputType.name,
       decoration: const InputDecoration(
         hintText: "Enter Reset Code",
-        border: InputBorder.none,
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xfff0efeb), width: 2 ),
+            //borderRadius: BorderRadius.all(Radius.circular(15)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xffbcd3e3), width: 2 ),
+            //borderRadius: BorderRadius.all(Radius.circular(15)),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xfff0efeb), width: 2 ),
+            //borderRadius: BorderRadius.all(Radius.circular(15)),
+          ),
         prefixIcon: Icon(MdiIcons.xml, color: Color(0xff333333),)
       ),
     );
@@ -46,17 +58,68 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       obscureText: true,
       decoration: const InputDecoration(
         hintText: "Enter New Password",
-        border: InputBorder.none,
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xfff0efeb), width: 2 ),
+            //borderRadius: BorderRadius.all(Radius.circular(15)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xffbcd3e3), width: 2 ),
+            //borderRadius: BorderRadius.all(Radius.circular(15)),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xfff0efeb), width: 2 ),
+            //borderRadius: BorderRadius.all(Radius.circular(15)),
+          ),
         prefixIcon: Icon(MdiIcons.lock, color: Color(0xff333333),)
       ),
     );
   }
 
   Widget topContainer(){
-    return Container(
-      height: Get.height * 0.15,
-      alignment: Alignment.center,
-      child: Image.asset("assets/images/icon.png", width: Get.width * 0.3,)
+    return Align(
+        alignment: Alignment.topLeft,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Image.asset("assets/images/icon.png", width: 70),
+        )
+    );
+  }
+
+  Widget submitBtn(){
+    return SizedBox(
+      height: 50,
+      width: 160,
+      child: ElevatedButton(
+        onPressed: ()async{
+          var aProvider = Provider.of<AuthProvider>(context, listen: false);
+
+          if(_newPasswordController.text.isEmpty){
+            ProjectToast.showErrorToast("password is required");
+          }
+
+          setState(() {
+            _isLoading = true;
+          });
+
+          final resp = await aProvider.resetPassword(
+              _codeController.text,
+              _newPasswordController.text
+          );
+          setState(() {
+            _isLoading = false;
+          });
+
+          if(resp){
+            Get.to(() => LoginScreen());
+          }
+        },
+        style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(Color(0xff30b85a))
+        ),
+        child:  _isLoading
+            ? CircularProgressIndicator.adaptive(backgroundColor: Colors.white,)
+            : Text('Continue', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),),
+      ),
     );
   }
 
@@ -200,7 +263,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       child: Scaffold(
 
         body: Container(
-          color: const Color(0xff464040),
+          color: Colors.white,
           width: double.infinity,
           height: double.infinity,
           child: SingleChildScrollView(
@@ -210,9 +273,65 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 children: [
                   SizedBox(height: 20,),
                   topContainer(),
-          
+                  SizedBox(height: 50,),
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Text(
+                        'Reset Password',
+                        style: TextStyle(
+                            color: Color(0xff30b85a),
+                            fontSize: 24,
+                            fontFamily: 'SofiaProMedium',
+                            fontWeight: FontWeight.bold
+                        ),
+                      ),
+                    ),
+                  ),
                   SizedBox(height: 20,),
-                  bottomContainer(),
+
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    child: codeField(),
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    child: passwordField(),
+                  ),
+                  SizedBox(height: 50,),
+
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        submitBtn(),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 20,),
+
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    child: RichText(
+                      text: TextSpan(
+                          text: 'Already have an account? ',
+                          style: TextStyle(fontSize: 14, color: Color(0xff4f4f4f), fontFamily: 'SofiaProMedium'),
+                          children: [
+                            TextSpan(
+                                text: 'Sign In',
+                                style: TextStyle(decoration: TextDecoration.underline, fontSize: 14, color: Color(0xff4f4f4f), fontFamily: 'SofiaProSemiBold'),
+                                recognizer: new TapGestureRecognizer()
+                                  ..onTap = () {
+                                    Get.to(() => LoginScreen());
+                                  }
+                            )
+                          ]
+                      ),
+                    ),
+                  ),
                 ],
               ),
           ),

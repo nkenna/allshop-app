@@ -1,3 +1,5 @@
+import 'package:ems/models/business.dart';
+
 class HomeProduct {
   dynamic? minPrice;
   dynamic maxPrice;
@@ -14,7 +16,7 @@ class HomeProduct {
   String? plazaId;
   String? location;
   String? admin;
-  List<Images>? images;
+  List<Images?>? images;
   String? createdAt;
   String? updatedAt;
   String? id;
@@ -85,36 +87,11 @@ class HomeProduct {
     data['location'] = this.location;
     data['admin'] = this.admin;
     if (this.images != null) {
-      data['images'] = this.images!.map((v) => v.toJson()).toList();
+      data['images'] = this.images!.map((v) => v!.toJson()).toList();
     }
     data['createdAt'] = this.createdAt;
     data['updatedAt'] = this.updatedAt;
     data['id'] = this.id;
-    return data;
-  }
-}
-
-class Images {
-  String? sId;
-  String? imageUrl;
-  String? imageName;
-  String? imageType;
-
-  Images({this.sId, this.imageUrl, this.imageName, this.imageType});
-
-  Images.fromJson(Map<String, dynamic> json) {
-    sId = json['_id'];
-    imageUrl = json['imageUrl'];
-    imageName = json['imageName'];
-    imageType = json['imageType'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['_id'] = this.sId;
-    data['imageUrl'] = this.imageUrl;
-    data['imageName'] = this.imageName;
-    data['imageType'] = this.imageType;
     return data;
   }
 }

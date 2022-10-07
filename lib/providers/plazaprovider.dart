@@ -127,7 +127,10 @@ class PlazaProvider with ChangeNotifier {
       ProjectToast.showNormalToast("${payload['message']}");
 
       List<pl.Plaza> hhs = [];
-      _plazas.clear();
+      if(page == 1){
+        _plazas.clear();
+      }
+      
       var data = payload['plazas'];
       _totalPlazas = payload['total'];
       _totalPlazaPages = (_totalPlazas/payload['perPage']).ceil();
@@ -140,7 +143,52 @@ class PlazaProvider with ChangeNotifier {
           print(e);
         }
       }
-      _plazas = hhs;
+      _plazas.addAll(hhs);
+      notifyListeners();
+      return _plazas;
+
+    }
+    else{
+      ProjectToast.showErrorToast("${payload['message']}");
+      return null;
+    }
+  }
+
+
+  Future<List<pl.Plaza>?> searchForPlaza(query) async {
+  
+    final response = await _httpService.searchForPlazaRequest(query);
+
+    if(response == null){
+      ProjectToast.showErrorToast("It seems you are having network issues. Please check the internet connectivity and try again."); 
+      return null;
+    }
+
+    int statusCode = response.statusCode;
+    var payload = response.data;
+    print(payload);
+
+    String status = payload['status'] ?? "";
+
+    if (status.toLowerCase() == "success" && statusCode == 200){
+      //ProjectToast.showNormalToast("${payload['message']}");
+
+      List<pl.Plaza> hhs = [];
+      _plazas.clear();
+      
+      var data = payload['plazas'];
+     // _totalPlazas = payload['total'];
+      //_totalPlazaPages = (_totalPlazas/payload['perPage']).ceil();
+
+      for (var i = 0; i < data.length; i++) {
+        try {
+          pl.Plaza hpl = pl.Plaza.fromJson(data[i]);
+          hhs.add(hpl);
+        } catch (e) {
+          print(e);
+        }
+      }
+      _plazas.addAll(hhs);
       notifyListeners();
       return _plazas;
 
@@ -192,4 +240,5 @@ class PlazaProvider with ChangeNotifier {
     }
   }
 
+  
 }

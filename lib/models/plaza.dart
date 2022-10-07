@@ -70,6 +70,24 @@ class Plaza {
     data['id'] = this.id;
     return data;
   }
+
+  ///this method will prevent the override of toString
+  String plazaAsString() {
+    return '#${this.id} ${this.name}';
+  }
+
+  ///this method will prevent the override of toString
+  bool plazaFilterByNameAndLocation(String filter) {
+    return name!.toLowerCase().startsWith(filter.toLowerCase()) || location == null ? false : location!.address!.toLowerCase().startsWith(filter.toLowerCase());
+  }
+
+  ///custom comparing function to check if two users are equal
+  bool isEqual(Plaza model) {
+    return id == model.id;
+  }
+
+  @override
+  String toString() => name!;
 }
 
 class User {
@@ -246,3 +264,5 @@ class Images {
     return data;
   }
 }
+
+

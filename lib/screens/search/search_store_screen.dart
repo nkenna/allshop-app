@@ -1,9 +1,11 @@
 import 'package:ems/models/home_store.dart';
 import 'package:ems/providers/homeprovider.dart';
+import 'package:ems/screens/plaza/store_screen.dart';
 import 'package:ems/utils/api.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+import 'package:ems/models/business.dart' as bs;
 
 class SearchStoreScreen extends StatefulWidget {
   const SearchStoreScreen({ Key? key }) : super(key: key);
@@ -25,16 +27,28 @@ class _SearchStoreScreenState extends State<SearchStoreScreen> {
               children: [
                 InkWell(
                   onTap: () async{
-                    
-                   
+                    bs.Images im = bs.Images(
+                      sId: store.imageData!.sId,
+                      imageName: store.imageData!.imageName,
+                      imageType: store.imageData!.imageType,
+                      imageUrl: store.imageData!.imageType
+                    );
+                    bs.Business business = bs.Business(
+                        id: store.id,
+                        image: im,
+                        name: store.name,
+
+                      );
+                      print("is bs null: ${business == null}");
+                   Get.to(() => StoreScreen(storeData: business));
                   },
                   child: Container(
                     width: Get.width * 0.3,
                     height: 80,
                     decoration: BoxDecoration(
-                      image: store.image != null
+                      image: store.imageData != null
                     ? DecorationImage(
-                        image: NetworkImage("${Api.IMAGE_BASE_URL}${store.image!.imageUrl}") ,                 
+                        image: NetworkImage("${Api.IMAGE_BASE_URL}${store.imageData!.imageUrl}") ,                 
                         fit: BoxFit.cover
                     )
                     : const DecorationImage(
@@ -84,7 +98,11 @@ class _SearchStoreScreenState extends State<SearchStoreScreen> {
         return Container(
           width: double.infinity,
           height: double.infinity,
-          child: ListView.builder(
+          child: hProvider.searchStores.isEmpty
+          ? Center(
+            child: Text('No Business/Stores found'),
+          )
+          : ListView.builder(
             itemCount: hProvider.searchStores.length,
             shrinkWrap: true,
             itemBuilder: (context, i){

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dio/adapter.dart';
 import 'package:dio/dio.dart';
 import 'package:ems/utils/api.dart';
 import 'package:ems/utils/sharedprefs.dart';
@@ -9,12 +10,18 @@ class HomeService {
 
   Future<dynamic> getPlazaHomeDataRequest(lat, lng) async {
     String? token = await SharedPrefs.instance.retrieveString("token");
-    print("the token");
+    print("the token:::::");
     print(token);
 
     var url = Api.BASE_URL + "plaza/get-plaza-home?lat=" + lat.toString() + "&lng=" + lng.toString();
     print(url);
     var dio = Dio();
+    (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+    (HttpClient client) {
+      client.badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+      return client;
+    };
     try {
 
      
@@ -46,6 +53,12 @@ class HomeService {
     var url = Api.BASE_URL + "business/get-business-by-plaza?page=" + page.toString() + "&plazaId=" + plazaId;
     print(url);
     var dio = Dio();
+    (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+    (HttpClient client) {
+      client.badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+      return client;
+    };
     try {
 
      
@@ -77,6 +90,12 @@ class HomeService {
     var url = Api.BASE_URL + "product/get-product-by-plaza?page=" + page.toString() + "&plazaId=" + plazaId;
     print(url);
     var dio = Dio();
+    (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+    (HttpClient client) {
+      client.badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+      return client;
+    };
     try {
 
      
@@ -108,6 +127,12 @@ class HomeService {
     var url = Api.BASE_URL + "plaza/all-plazas?page=" + page.toString() + "&userId=" + userId;
     print(url);
     var dio = Dio();
+    (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+    (HttpClient client) {
+      client.badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+      return client;
+    };
     try {
 
      
@@ -139,6 +164,12 @@ class HomeService {
     var url = Api.BASE_URL + "plaza/search-all?query=$query";
     print(url);
     var dio = Dio();
+    (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+    (HttpClient client) {
+      client.badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+      return client;
+    };
     try {
 
      
@@ -172,6 +203,12 @@ class HomeService {
   
     
     var dio = Dio();
+    (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+    (HttpClient client) {
+      client.badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+      return client;
+    };
     try {
 
       var body = jsonEncode(
@@ -203,4 +240,41 @@ class HomeService {
     }
   }
 
+  Future<dynamic> searchForPlazaRequest(query) async {
+    //String? token = await SharedPrefs.instance.retrieveString("token");
+    //print("the token");
+    //print(token);
+
+    var url = Api.BASE_URL + "plaza/search-for-plaza?query=$query";
+    print(url);
+    var dio = Dio();
+    (dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+    (HttpClient client) {
+      client.badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+      return client;
+    };
+    try {
+
+     
+      dio.options.connectTimeout = 35000;
+      Response response = await dio.get(
+        url,
+        options: Options(
+            contentType: 'application/json',
+            headers: {
+              HttpHeaders.contentTypeHeader: 'application/json',
+              HttpHeaders.acceptHeader: 'application/json',
+              //HttpHeaders.authorizationHeader: 'Bearer ' + token!
+            }
+        ),
+      );
+      print("this response");
+      print(response);
+      return response;
+    } on DioError catch (e) {
+      return e.response != null ? e.response : null;
+    }
+  }
+  
 }

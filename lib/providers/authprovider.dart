@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:ems/models/category.dart';
 import 'package:ems/models/user.dart';
 import 'package:ems/services/authservice.dart';
 import 'package:ems/utils/project_toast.dart';
 import 'package:ems/utils/sharedprefs.dart';
 import 'package:flutter/widgets.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthProvider with ChangeNotifier {
   final AuthService _httpService = AuthService();
@@ -231,6 +234,7 @@ class AuthProvider with ChangeNotifier {
 
       _numOfStores = payload['numberOfBusiness'];
       _numOfProducts = payload['numberOfProducts'];
+      _numOfServices = payload['numberOfServices'];
       notifyListeners();
       return true;
 
@@ -244,6 +248,34 @@ class AuthProvider with ChangeNotifier {
   Future<void> logout(){
     return SharedPrefs.instance.clearData();
   }
+
+  Future<bool> editProfileImageRequest (File imageFile,  Map<String, dynamic> dataToSendMap, String userId) async {
+  
+    final response = await _httpService.editProfilePicRequest(imageFile, dataToSendMap);
+
+    if(response == null){
+      ProjectToast.showErrorToast("It seems you are having network issues. Please check the internet connectivity and try again."); 
+      return false;
+    }
+
+    int statusCode = response.statusCode;
+    var payload = response.data;
+    print(payload);
+
+    String status = payload['status'] ?? "";
+
+    if (status.toLowerCase() == "success" && statusCode == 200){
+      ProjectToast.showNormalToast("${payload['message']}");
+      getUserProfileDetails(userId);
+      return true;
+
+    }
+    else{
+      ProjectToast.showErrorToast("${payload['message']}");
+      return false;
+    }
+  }
+
 
    List<Category> _categories = [];
   List<Category> get categories => _categories;
@@ -285,6 +317,75 @@ class AuthProvider with ChangeNotifier {
       ProjectToast.showErrorToast("${payload['message']}");
       return null;
     }
+  }
+
+
+  Future<bool> signInWithGoogle(BuildContext context) async {
+    final GoogleSignIn googleSignIn = GoogleSignIn();
+
+    final GoogleSignInAccount? googleSignInAccount =
+        await googleSignIn.signIn();
+        
+
+    if (googleSignInAccount != null) {
+      final GoogleSignInAuthentication googleSignInAuthentication =
+          await googleSignInAccount.authentication;
+
+      print("access token: ${googleSignInAuthentication.accessToken}");
+      print("access token: ${googleSignInAuthentication.idToken}");
+
+      if(googleSignInAuthentication.idToken != null){
+        final response = await _httpService.googleLoginRequest(googleSignInAuthentication.idToken, googleSignInAuthentication.accessToken);
+
+        if(response == null){
+          ProjectToast.showErrorToast("It seems you are having network issues. Please check the internet connectivity and try again.");
+          return false;
+        }
+
+        int statusCode = response.statusCode;
+        var payload = response.data;
+
+        print(payload);
+        if (statusCode == 200){
+          ProjectToast.showNormalToast(payload['message']);
+          // save token
+          SharedPrefs.instance.saveToken(payload['token']);
+
+          var token = payload['token'];
+      
+
+          // save user
+          try{
+            User u = User.fromJson(payload['user']);
+            if(u != null){
+              _user = u;
+               SharedPrefs.instance.setUserData(_user!);
+            }
+          }catch(e){
+            print(e);
+          }
+          
+          return true;
+        }
+       
+        else{
+          ProjectToast.showErrorToast(payload['message']);
+          return false;
+        }
+
+
+      }else{
+        return false;
+      }
+
+
+      
+    }
+    else{
+      return false;
+    }
+
+
   }
 
 }

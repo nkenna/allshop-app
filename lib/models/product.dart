@@ -5,6 +5,7 @@ class Product {
   String? name;
   String? detail;
   String? ref;
+  bool? starred;
   String? businessId;
   String? userId;
   String? categoryId;
@@ -17,9 +18,22 @@ class Product {
   String? createdAt;
   String? updatedAt;
   String? id;
+  dynamic ratingCount;
+  dynamic sumRating;
+  dynamic avgRating;
+  List<SocialLinks>? socialLinks;
+  
+
+
 
   Product(
-      {this.minPrice,
+      {
+        this.starred,
+        this.ratingCount,
+        this.socialLinks,
+        this.sumRating,
+        this.avgRating,
+        this.minPrice,
       this.maxPrice,
       this.onlineLinks,
       this.name,
@@ -36,12 +50,26 @@ class Product {
       this.images,
       this.createdAt,
       this.updatedAt,
+      
       this.id});
 
+
   Product.fromJson(Map<String, dynamic> json) {
+    ratingCount = json['ratingCount'];
+    starred = json['starred'];
+    sumRating = json['sumRating'];
+    avgRating = json['avgRating'];
     minPrice = json['minPrice'];
     maxPrice = json['maxPrice'];
-    onlineLinks = json['onlineLinks'] == null ? List.empty() : json['onlineLinks'].cast<String>();
+
+    if (json['socialLinks'] != null) {
+      socialLinks = <SocialLinks>[];
+      json['socialLinks'].forEach((v) {
+        socialLinks!.add(new SocialLinks.fromJson(v));
+      });
+    }
+  
+    //onlineLinks = json['onlineLinks'] == null ? List.empty() : json['onlineLinks'].cast<String>();
     name = json['name'];
     detail = json['detail'];
     ref = json['ref'];
@@ -72,9 +100,12 @@ class Product {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['minPrice'] = this.minPrice;
     data['maxPrice'] = this.maxPrice;
-    data['onlineLinks'] = this.onlineLinks;
+    //data['onlineLinks'] = this.onlineLinks;
     data['name'] = this.name;
     data['detail'] = this.detail;
+    if (this.socialLinks != null) {
+      data['socialLinks'] = this.socialLinks!.map((v) => v.toJson()).toList();
+    }
     data['ref'] = this.ref;
     data['businessId'] = this.businessId;
     data['userId'] = this.userId;
@@ -154,6 +185,9 @@ class Business {
   String? location;
   String? createdAt;
   String? updatedAt;
+  String? address;
+  String? contactPhone;
+  
   int? iV;
 
   Business(
@@ -170,6 +204,8 @@ class Business {
       this.plaza,
       this.user,
       this.locationId,
+      this.address,
+      this.contactPhone,
       this.location,
       this.createdAt,
       this.updatedAt,
@@ -185,6 +221,8 @@ class Business {
     detail = json['detail'];
     userId = json['userId'];
     plazaId = json['plazaId'];
+       address = json['address'];
+    contactPhone = json['contactPhone'];
     categoryId = json['categoryId'];
     category = json['category'];
     plaza = json['plaza'];
@@ -260,6 +298,28 @@ class Images {
     data['imageUrl'] = this.imageUrl;
     data['imageName'] = this.imageName;
     data['imageType'] = this.imageType;
+    return data;
+  }
+}
+
+class SocialLinks {
+  String? sId;
+  String? linkTitle;
+  String? linkUrl;
+
+  SocialLinks({this.sId, this.linkTitle, this.linkUrl});
+
+  SocialLinks.fromJson(Map<String, dynamic> json) {
+    sId = json['_id'];
+    linkTitle = json['linkTitle'];
+    linkUrl = json['linkUrl'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['_id'] = this.sId;
+    data['linkTitle'] = this.linkTitle;
+    data['linkUrl'] = this.linkUrl;
     return data;
   }
 }

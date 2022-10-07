@@ -3,6 +3,7 @@ import 'package:ems/screens/auth/login_screen.dart';
 import 'package:ems/screens/dashboard/landing_screen.dart';
 import 'package:ems/utils/project_toast.dart';
 import 'package:ems/widgets/onboardingbutton.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -21,6 +22,7 @@ class _SignupScreenState extends State<SignupScreen> {
   TextEditingController _firstNameController = TextEditingController();
   TextEditingController _lastNameController = TextEditingController();
   TextEditingController _phoneController = TextEditingController();
+  bool _obscure = true;
 
   bool _isLoading = false;
 
@@ -32,7 +34,18 @@ class _SignupScreenState extends State<SignupScreen> {
       keyboardType: TextInputType.name,
       decoration: const InputDecoration(
         hintText: "First Name",
-        border: InputBorder.none,
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xfff0efeb), width: 2 ),
+            //borderRadius: BorderRadius.all(Radius.circular(15)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xffbcd3e3), width: 2 ),
+            //borderRadius: BorderRadius.all(Radius.circular(15)),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xfff0efeb), width: 2 ),
+            //borderRadius: BorderRadius.all(Radius.circular(15)),
+          ),
         prefixIcon: Icon(MdiIcons.accountCircle, color: Color(0xff333333),)
       ),
     );
@@ -46,7 +59,18 @@ class _SignupScreenState extends State<SignupScreen> {
       keyboardType: TextInputType.name,
       decoration: const InputDecoration(
         hintText: "Last Name",
-        border: InputBorder.none,
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xfff0efeb), width: 2 ),
+            //borderRadius: BorderRadius.all(Radius.circular(15)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xffbcd3e3), width: 2 ),
+            //borderRadius: BorderRadius.all(Radius.circular(15)),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xfff0efeb), width: 2 ),
+            //borderRadius: BorderRadius.all(Radius.circular(15)),
+          ),
         prefixIcon: Icon(MdiIcons.accountCircle, color: Color(0xff333333),)
       ),
     );
@@ -61,7 +85,18 @@ class _SignupScreenState extends State<SignupScreen> {
       keyboardType: TextInputType.phone,
       decoration: const InputDecoration(
         hintText: "Phone Number",
-        border: InputBorder.none,
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xfff0efeb), width: 2 ),
+            //borderRadius: BorderRadius.all(Radius.circular(15)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xffbcd3e3), width: 2 ),
+            //borderRadius: BorderRadius.all(Radius.circular(15)),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xfff0efeb), width: 2 ),
+            //borderRadius: BorderRadius.all(Radius.circular(15)),
+          ),
         prefixIcon: Icon(MdiIcons.phone, color: Color(0xff333333),)
       ),
     );
@@ -75,7 +110,18 @@ class _SignupScreenState extends State<SignupScreen> {
       keyboardType: TextInputType.emailAddress,
       decoration: const InputDecoration(
         hintText: "Email Address",
-        border: InputBorder.none,
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xfff0efeb), width: 2 ),
+            //borderRadius: BorderRadius.all(Radius.circular(15)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xffbcd3e3), width: 2 ),
+            //borderRadius: BorderRadius.all(Radius.circular(15)),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xfff0efeb), width: 2 ),
+            //borderRadius: BorderRadius.all(Radius.circular(15)),
+          ),
         prefixIcon: Icon(MdiIcons.email, color: Color(0xff333333),)
       ),
     );
@@ -84,215 +130,134 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget passwordField(){
     return TextField(
       controller: _passwordController,
-      style: const TextStyle(color: Color(0xff333333), fontSize: 14),
+      style: TextStyle(color: Color(0xff333333), fontSize: 14),
       textInputAction: TextInputAction.next,
       keyboardType: TextInputType.emailAddress,
-      obscureText: true,
-      decoration: const InputDecoration(
+      obscureText: _obscure,
+      decoration: InputDecoration(
         hintText: "Password",
-        border: InputBorder.none,
-        prefixIcon: Icon(MdiIcons.lock, color: Color(0xff333333),)
+        border: OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xfff0efeb), width: 2 ),
+          //borderRadius: BorderRadius.all(Radius.circular(15)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xffbcd3e3), width: 2 ),
+          //borderRadius: BorderRadius.all(Radius.circular(15)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Color(0xfff0efeb), width: 2 ),
+          //borderRadius: BorderRadius.all(Radius.circular(15)),
+        ),
+        prefixIcon: Icon(MdiIcons.lock, color: Color(0xff333333),),
+        suffixIcon: InkWell(
+              onTap: (){
+                setState(() =>_obscure = !_obscure);
+              },
+              child: Icon(_obscure ? Icons.visibility : Icons.visibility_off_rounded, color: Colors.black,),
+            ),
       ),
     );
   }
 
   Widget topContainer(){
-    return Container(
-      height: Get.height * 0.1,
-      alignment: Alignment.center,
-      child: Image.asset("assets/images/icon.png", width: Get.width * 0.3,)
+    return Align(
+        alignment: Alignment.topLeft,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Image.asset("assets/images/icon.png", width: 70),
+        )
     );
   }
 
-  Widget formContainer(){
-    return Container(
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(40)),
-        color: Colors.white,
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            child: firstNameField(),
-          ),
 
-           const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Divider(
-                height: 3,
-                thickness: 3,
-              ),
-            ),
+  Widget signupBtn(){
+    return SizedBox(
+      height: 50,
+      width: 160,
+      child: ElevatedButton(
+        onPressed: ()async{
+          var aProvider = Provider.of<AuthProvider>(context, listen: false);
 
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            child: lastNameField(),
-          ),
+          if(_emailController.text.isEmpty){
+            ProjectToast.showErrorToast("email is required");
+          }
 
-          const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Divider(
-                height: 3,
-                thickness: 3,
-              ),
-            ),
+          if(!_emailController.text.isEmail){
+            ProjectToast.showErrorToast("valid email is required");
+          }
 
-            Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            child: phoneField(),
-          ),
+          if(_phoneController.text.isEmpty){
+            ProjectToast.showErrorToast("valid phone is required");
+            return;
+          }
 
-          const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Divider(
-                height: 3,
-                thickness: 3,
-              ),
-            ),
+          // add country code to phone
+          String? phone = aProvider.addCountryCodeToPhone(_phoneController.text);
 
-           Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: emailField(),
-            ),
-            // ignore: prefer_const_constructors
-        
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: Divider(
-                height: 3,
-                thickness: 3,
-              ),
-            ),
-            // ignore: prefer_const_constructors
-          
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              child: passwordField(),
-            ),
+          if(phone == null){
+            ProjectToast.showErrorToast("valid phone is required");
+            return;
+          }
 
+          setState(() {
+            _isLoading = true;
+          });
 
-        ],
+          final resp = await aProvider.signUp(
+              _firstNameController.text,
+              _lastNameController.text,
+              _passwordController.text,
+              _emailController.text,
+              phone
+          );
+          setState(() {
+            _isLoading = false;
+          });
+
+          if(resp){
+            Get.offAll(() => LoginScreen());
+            //aProvider.loginRequest(_emailController.text, _passwordController.text);
+          }
+        },
+        style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(Color(0xff30b85a))
+        ),
+        child:  _isLoading
+            ? CircularProgressIndicator.adaptive(backgroundColor: Colors.white,)
+            : Text('Sign Up', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),),
       ),
     );
   }
-  
 
-  Widget bottomContainer(){
-    return Material(
-      elevation: 5,
-      borderRadius: const BorderRadius.only(topLeft: Radius.circular(40), topRight: Radius.circular(40)),
-      color: const Color(0xffE5E5E5),
-      child: Container(
-        width: Get.width,
-        height: Get.height * 0.8,
-        alignment: Alignment.bottomCenter,
-        decoration: const BoxDecoration(
-           borderRadius: BorderRadius.only(topLeft: Radius.circular(40), topRight: Radius.circular(40)),
-            color: Color(0xffE5E5E5),
+  Widget cancelBtn(){
+    return SizedBox(
+      height: 50,
+      width: 160,
+      child: ElevatedButton(
+        onPressed: (){
+          _firstNameController.clear();
+          _lastNameController.clear();
+          _emailController.clear();
+          _phoneController.clear();
+          _passwordController.clear();
+        },
+        style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(Colors.transparent),
+            elevation: MaterialStateProperty.all(0.0)
         ),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // ignore: prefer_const_constructors
-              SizedBox(height: 30,),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Register", style: TextStyle(fontFamily: 'MonumentRegular', color: Color(0xff333333), fontSize: 20,),),
-                ],
-              ),
-              SizedBox(height: 30,),
-        
-              Padding(
-                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: formContainer(),
-              ),
-        
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                   
-        
-                    OnboardingButtons(
-                      height: 50,
-                      width: 150,
-                      color: Color(0xff333333),
-                      isLoading: _isLoading,
-                      btnText: "Signup",
-                      onPressed: () async{
-                        var aProvider = Provider.of<AuthProvider>(context, listen: false);
-                        
-                        if(_emailController.text.isEmpty){
-                          ProjectToast.showErrorToast("email is required");
-                        }
-        
-                        if(!_emailController.text.isEmail){
-                          ProjectToast.showErrorToast("valid email is required");
-                        }
-        
-                        if(_phoneController.text.isEmpty){
-                          ProjectToast.showErrorToast("valid phone is required");
-                        }
-        
-                        // add country code to phone
-                        String? phone = aProvider.addCountryCodeToPhone(_phoneController.text);
-        
-                        if(phone == null){
-                          ProjectToast.showErrorToast("valid phone is required");
-                        }
-        
-                        setState(() {
-                            _isLoading = true;
-                        });
-        
-                        final resp = await aProvider.signUp(
-                          _firstNameController.text, 
-                          _lastNameController.text, 
-                          _passwordController.text, 
-                          _emailController.text, 
-                          phone!
-                        );
-                        setState(() {
-                            _isLoading = false;
-                        });
-        
-                        if(resp){
-                          Get.offAll(() => LoginScreen());
-                          //aProvider.loginRequest(_emailController.text, _passwordController.text);
-                        }                     
-                      },
-                    )
-                  ],
-                )
-              ),
-        
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: InkWell(
-                  onTap: () => Get.to(() => LoginScreen()),
-                  child: RichText(
-                    text: TextSpan(
-                      text: 'Have an account? ',
-                       style: TextStyle(color: Color(0xff333333), fontSize: 16),
-                      children: [
-                        TextSpan(
-                          text: 'Login',
-                           style: TextStyle(color: Color(0xffB83232), fontSize: 16, fontWeight: FontWeight.bold),
-                        )
-                      ]
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+        child: Text('Cancel', style: TextStyle(color: Color(0xff44ce81), fontSize: 14, fontWeight: FontWeight.bold),),
       ),
+    );
+  }
+
+  Widget authBtnsRow(){
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        cancelBtn(),
+        Spacer(),
+        signupBtn(),
+      ],
     );
   }
 
@@ -300,9 +265,8 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-
         body: Container(
-          color: const Color(0xff464040),
+          color: Colors.white,
           width: double.infinity,
           height: double.infinity,
           child: SingleChildScrollView(
@@ -312,9 +276,97 @@ class _SignupScreenState extends State<SignupScreen> {
                 children: [
                   SizedBox(height: 20,),
                   topContainer(),
-          
+                  SizedBox(height: 30,),
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Text(
+                        'Create an Account',
+                        style: TextStyle(
+                            color: Color(0xff30b85a),
+                            fontSize: 24,
+                            fontFamily: 'SofiaProMedium',
+                            fontWeight: FontWeight.bold
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 15,),
+
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Text(
+                        'Please fill the form below',
+                        style: TextStyle(
+                          color: Color(0xff979797),
+                          fontSize: 14,
+                          //fontFamily: 'SofiaProMedium',
+                          //fontWeight: FontWeight.bold
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 30,),
+
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    child: firstNameField(),
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    child: lastNameField(),
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    child: phoneField(),
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    child: emailField(),
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    child: passwordField(),
+                  ),
+
+                  SizedBox(height: 50,),
+
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    child: authBtnsRow(),
+                  ),
+
                   SizedBox(height: 20,),
-                  bottomContainer(),
+
+
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    child: RichText(
+                      text: TextSpan(
+                          text: 'Already have an account? ',
+                          style: TextStyle(fontSize: 14, color: Color(0xff4f4f4f), fontFamily: 'SofiaProMedium'),
+                          children: [
+                            TextSpan(
+                                text: 'Sign In',
+                                style: TextStyle(decoration: TextDecoration.underline, fontSize: 14, color: Color(0xff4f4f4f), fontFamily: 'SofiaProSemiBold'),
+                                recognizer: new TapGestureRecognizer()
+                                  ..onTap = () {
+                                    Get.to(() => LoginScreen());
+                                  }
+                            )
+                          ]
+                      ),
+                    ),
+                  ),
+
+
                 ],
               ),
           ),

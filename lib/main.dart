@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:ems/providers/authprovider.dart';
 import 'package:ems/providers/businessprovider.dart';
 import 'package:ems/providers/homeprovider.dart';
+import 'package:ems/providers/messageprovider.dart';
 import 'package:ems/providers/plazaprovider.dart';
 import 'package:ems/providers/productprovider.dart';
+import 'package:ems/providers/serviceprovider.dart';
 import 'package:ems/providers/storeprovider.dart';
 import 'package:ems/screens/auth/login_screen.dart';
 import 'package:ems/utils/projectcolors.dart';
@@ -86,61 +88,86 @@ configureFPN() async{
     });
 
     FirebaseMessaging.onMessage.listen((RemoteMessage? message)async {
-    RemoteNotification notification = message!.notification!;
-    AndroidNotification android = message.notification!.android!;   
-    AppleNotification apple = message.notification!.apple!;
+      RemoteNotification notification = message!.notification!;
+      AndroidNotification android = message.notification!.android!;   
+      //AppleNotification apple = message.notification!.apple!;
 
-    print("MESSAGE IS COMING");
+      print("MESSAGE IS COMING");
 
 
-    if (notification != null && android != null) {
-      AndroidNotificationDetails andWOImage = AndroidNotificationDetails(
-          channel!.id,
-          channel!.name,
-          channelDescription: channel!.description,
-          icon: 'ic_notif',
-          enableLights: true,
-          visibility: NotificationVisibility.public
-      );
+      if (notification != null && android != null) {
+        AndroidNotificationDetails andWOImage = AndroidNotificationDetails(
+            channel!.id,
+            channel!.name,
+            channelDescription: channel!.description,
+            icon: 'ic_launcher',
+            enableLights: true,
+            visibility: NotificationVisibility.public
+        );
 
-      flutterLocalNotificationsPlugin!.show(
-          notification.hashCode,
-          notification.title,
-          notification.body,
+        flutterLocalNotificationsPlugin!.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
 
-          NotificationDetails(
-            android: andWOImage,
-          ));
-    }
+            NotificationDetails(
+              android: andWOImage,
+            ));
+      }
 
-    if (notification != null && apple != null) {
-      AndroidNotificationDetails andWOImage = AndroidNotificationDetails(
-          channel!.id,
-          channel!.name,
-          channelDescription: channel!.description,
-          icon: 'ic_notif',
-          enableLights: true,
-          visibility: NotificationVisibility.public
-      );
+/*      if (notification != null && apple != null) {
+        AndroidNotificationDetails andWOImage = AndroidNotificationDetails(
+            channel!.id,
+            channel!.name,
+            channelDescription: channel!.description,
+            icon: 'ic_notif',
+            enableLights: true,
+            visibility: NotificationVisibility.public
+        );
 
-      IOSNotificationDetails ios = IOSNotificationDetails(
+        IOSNotificationDetails ios = IOSNotificationDetails();
 
-      );
+        flutterLocalNotificationsPlugin!.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
 
-      flutterLocalNotificationsPlugin!.show(
-          notification.hashCode,
-          notification.title,
-          notification.body,
-
-          NotificationDetails(
-            iOS: ios
-          ));
-    }
+            NotificationDetails(
+              iOS: ios
+            ));
+      }*/
   });
 
   FirebaseMessaging.onBackgroundMessage((message) {
     print('A new background event!');
     print('${message.data}');
+
+    RemoteNotification notification = message.notification!;
+      AndroidNotification android = message.notification!.android!;   
+      //AppleNotification apple = message.notification!.apple!;
+
+      print("MESSAGE IS COMING");
+
+
+      if (notification != null && android != null) {
+        AndroidNotificationDetails andWOImage = AndroidNotificationDetails(
+            channel!.id,
+            channel!.name,
+            channelDescription: channel!.description,
+            icon: 'ic_launcher',
+            enableLights: true,
+            visibility: NotificationVisibility.public
+        );
+
+        flutterLocalNotificationsPlugin!.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+
+            NotificationDetails(
+              android: andWOImage,
+            ));
+      }
 
     return Future.value();
   });
@@ -153,18 +180,32 @@ configureFPN() async{
   });
 }
 
+class MyHttpOverrides extends HttpOverrides{
+  @override
+  HttpClient createHttpClient(SecurityContext? context){
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
+  }
+}
+
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  HttpOverrides.global = MyHttpOverrides();
+ /* ByteData data = await rootBundle.load('assets/cert.pem');
+  SecurityContext context = SecurityContext.defaultContext;
+  context.setTrustedCertificatesBytes(data.buffer.asUint8List());*/
+
   await SharedPrefs.instance.initializePreference();
   await configureFPN();
 
   SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
-        statusBarColor: mainColor,
-        statusBarIconBrightness: Brightness.light,
-        systemNavigationBarIconBrightness: Brightness.light,
+        statusBarColor: Colors.white,
+        statusBarIconBrightness: Brightness.dark,
+        systemNavigationBarIconBrightness: Brightness.dark,
+        systemNavigationBarDividerColor: Colors.transparent,
         statusBarBrightness: Brightness.light,
-        systemNavigationBarColor: mainColor,
+        systemNavigationBarColor: Colors.white,
       )
   );
   
@@ -177,6 +218,8 @@ void main() async{
        ChangeNotifierProvider(create: (context) => StoreProvider()),
        ChangeNotifierProvider(create: (context) => ProductProvider()),
        ChangeNotifierProvider(create: (context) => BusinessProvider()),
+       ChangeNotifierProvider(create: (context) => ServiceProvider()),
+       ChangeNotifierProvider(create: (context) => MessageProvider()),
       ],
         child: const MyApp(),
       )

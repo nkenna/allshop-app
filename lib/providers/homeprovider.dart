@@ -1,6 +1,10 @@
 import 'package:ems/models/home_product.dart';
 import 'package:ems/models/home_store.dart';
 import 'package:ems/models/homeplazadata.dart';
+import 'package:ems/models/product.dart';
+import 'package:ems/models/home_service.dart' as hs;
+import 'package:ems/models/searchplaza.dart';
+import 'package:ems/models/service.dart';
 import 'package:ems/services/homeservice.dart';
 import 'package:ems/utils/project_toast.dart';
 import 'package:ems/utils/sharedprefs.dart';
@@ -18,6 +22,9 @@ class HomeProvider with ChangeNotifier {
   List<HomeStore> _homeStoreData = [];
   List<HomeStore> get homeStoreData => _homeStoreData;
 
+  List<hs.HomeService> _homeServiceData = [];
+  List<hs.HomeService> get homeServiceData => _homeServiceData;
+
   Future<dynamic> getPlazaHomeDataRequest (lat, lng) async {
   
     final response = await _httpService.getPlazaHomeDataRequest(lat, lng);
@@ -34,7 +41,7 @@ class HomeProvider with ChangeNotifier {
     String status = payload['status'] ?? "";
 
     if (status.toLowerCase() == "success" && statusCode == 200){
-      ProjectToast.showNormalToast("${payload['message']}");
+      //ProjectToast.showNormalToast("${payload['message']}");
 
       List<HomePlazaData> hhs = [];
       _homePlazaData.clear();
@@ -74,14 +81,30 @@ class HomeProvider with ChangeNotifier {
       var datas = payload['business'];
 
       for (var i = 0; i < datas.length; i++) {
-        try {
+       // try {
           HomeStore hs = HomeStore.fromJson(datas[i]);
           hss.add(hs);
+       // } catch (e) {
+       //   print(e);
+     //   }
+      }
+      _homeStoreData = hss;
+
+      List<hs.HomeService> hos = [];
+      _homeServiceData.clear();
+      var datahs = payload['services'];
+
+      for (var i = 0; i < datahs.length; i++) {
+        try {
+          hs.HomeService hns = hs.HomeService.fromJson(datahs[i]);
+          hos.add(hns);
         } catch (e) {
           print(e);
         }
       }
-      _homeStoreData = hss;
+      _homeServiceData = hos;
+
+
       notifyListeners();
       return null;
 
@@ -92,14 +115,18 @@ class HomeProvider with ChangeNotifier {
     }
   }
 
-  List<Plaza> _searchPlazas = [];
-  List<Plaza> get searchPlazas => _searchPlazas;
+  List<SearchPlaza> _searchPlazas = [];
+  List<SearchPlaza> get searchPlazas => _searchPlazas;
 
-  List<HomeProduct> _searchProducts = [];
-  List<HomeProduct> get searchProducts => _searchProducts;
+  List<Product> _searchProducts = [];
+  List<Product> get searchProducts => _searchProducts;
 
   List<HomeStore> _searchStores = [];
   List<HomeStore> get searchStores  => _searchStores;
+
+  
+
+  
   
   Future<dynamic> searchAll(query) async {
   
@@ -119,13 +146,13 @@ class HomeProvider with ChangeNotifier {
     if (status.toLowerCase() == "success" && statusCode == 200){
       ProjectToast.showNormalToast("${payload['message']}");
 
-      List<Plaza> sps = [];
+      List<SearchPlaza> sps = [];
       _searchPlazas.clear();
       var datap = payload['plazas'];
 
       for (var i = 0; i < datap.length; i++) {
         try {
-          Plaza hpl = Plaza.fromJson(datap[i]);
+          SearchPlaza hpl = SearchPlaza.fromJson(datap[i]);
           sps.add(hpl);
         } catch (e) {
           print(e);
@@ -134,23 +161,26 @@ class HomeProvider with ChangeNotifier {
       _searchPlazas = sps;
       notifyListeners();
 
-      List<HomeProduct> spp = [];
+      List<Product> spp = [];
       _searchProducts.clear();
       var datapp = payload['products'];
 
+      print("search product len: ${datapp.length}" );
+
       for (var i = 0; i < datapp.length; i++) {
-        try {
-          HomeProduct hpl = HomeProduct.fromJson(datapp[i]);
+        //try {
+          Product hpl = Product.fromJson(datapp[i]);
           spp.add(hpl);
-        } catch (e) {
-          print(e);
-        }
+        //} catch (e) {
+        //  print(e);
+        //}
       }
       _searchProducts = spp;
+      print("final product len: ${_searchProducts.length}" );
       notifyListeners();
 
       List<HomeStore> spps = [];
-      _searchProducts.clear();
+      _searchStores.clear();
       var datapps = payload['business'];
 
       for (var i = 0; i < datapps.length; i++) {
