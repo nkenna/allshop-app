@@ -199,7 +199,7 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
   Widget addressField(){
     return TextField(
           style: const TextStyle(color: Colors.black, fontSize: 12),
-          keyboardType: TextInputType.text,
+          keyboardType: TextInputType.streetAddress,
           textInputAction: TextInputAction.next,
           controller: addressController,
           decoration: const InputDecoration(
@@ -290,6 +290,7 @@ class _AddBusinessScreenState extends State<AddBusinessScreen> {
                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                   child: contactPhoneField(),
                 ),
+
 
                  Padding(
                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
